@@ -7,9 +7,9 @@ const menuData = [
   },
   {
     id: 2,
-    title: "Menu",
+    title: "Add Book",
     newTab: false,
-    path: "/menu",
+    path: "/add-book",
   },
 
   {

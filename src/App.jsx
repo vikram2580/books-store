@@ -1,9 +1,12 @@
 /* eslint-disable no-unused-vars */
 import "./App.css";
 import Header from "./components/header";
+import Hero from "./components/hero";
 import BooksList from "./pages/bookList";
 import { Authenticator } from "@aws-amplify/ui-react";
 import { Amplify } from "aws-amplify";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import AddBook from "./components/addBook";
 
 function App() {
   const getUserInfo = async () => {
@@ -56,10 +59,29 @@ function App() {
       }}
     >
       {({ signOut, user }) => (
-        <main className="bg-gradient-to-br from-purple-200 to-indigo-400 pt-10">
+        // <main className="bg-gradient-to-br from-purple-200 to-indigo-400 pt-10">
+        //   <Header signout={signOut} />
+        //   <Hero />
+        //   <BooksList />
+        // </main>
+        <Router>
           <Header signout={signOut} />
-          <BooksList />
-        </main>
+          <main className="bg-gradient-to-br from-purple-200 to-indigo-400 pt-10">
+            <Routes>
+              <Route
+                path="/"
+                element={
+                  <>
+                    {/* <Hero /> */}
+                    <BooksList />
+                  </>
+                }
+              />
+              <Route path="/add-book" element={<AddBook />} />
+              <Route path="/edit-book/:id" element={<AddBook />} />
+            </Routes>
+          </main>
+        </Router>
       )}
     </Authenticator>
   );

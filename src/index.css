@@ -2,6 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
+::-webkit-scrollbar {
+  display: none;
+}
 :root {
   --amplify-components-button-primary-background-color: #a78bfa !important;
   --amplify-components-button-primary-hover-background-color: #9b7ef3 !important;

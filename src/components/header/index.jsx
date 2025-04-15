@@ -4,7 +4,7 @@ import BookIcon from "/images/book.png";
 import { useEffect, useState } from "react";
 import menuData from "./menuData";
 import { motion } from "framer-motion";
-
+import { Link } from "react-router";
 const Header = ({ user, signout }) => {
   const [navigationOpen, setNavigationOpen] = useState(false);
   const [dropdownToggler, setDropdownToggler] = useState(false);
@@ -95,7 +95,10 @@ const Header = ({ user, signout }) => {
                         onClick={() => setDropdownToggler(!dropdownToggler)}
                         className="flex cursor-pointer items-center justify-between gap-3 hover:text-primary"
                       >
-                        {menuItem.title}
+                        <Link to={menuItem.path} className="mr-4">
+                          {menuItem.title}
+                        </Link>
+
                         <span>
                           <svg
                             className="h-3 w-3 cursor-pointer fill-waterloo group-hover:fill-primary"
@@ -110,13 +113,13 @@ const Header = ({ user, signout }) => {
                   ) : (
                     <motion.button
                       onClick={() => handleScroll(menuItem.title)}
-                      className={
-                        "hover:text-red-600  text-xl font-semibold "
-                      }
+                      className={"hover:text-red-600  text-xl font-semibold "}
                       whileHover={{ scale: 1.1 }}
                       whileTap={{ scale: 0.9 }}
                     >
-                      {menuItem.title}
+                      <Link to={menuItem.path} className="mr-4">
+                        {menuItem.title}
+                      </Link>
                     </motion.button>
                   )}
                 </li>

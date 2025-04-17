@@ -7,8 +7,11 @@ import { Authenticator } from "@aws-amplify/ui-react";
 import { Amplify } from "aws-amplify";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import AddBook from "./components/addBook";
+import { fetchAuthSession } from "aws-amplify/auth";
 
-function App() {
+const App = () => {
+
+
   const getUserInfo = async () => {
     try {
       const user = await Amplify.getConfig(); // Get user info
@@ -19,6 +22,13 @@ function App() {
     }
   };
   getUserInfo();
+
+  const getIdToken = async () => {
+    const session = await fetchAuthSession();
+    return session?.tokens.idToken.toString() ?? "";
+  };
+
+  const token = getIdToken();
   return (
     <Authenticator
       className="pt-35 pb-25"
@@ -72,8 +82,8 @@ function App() {
                 path="/"
                 element={
                   <>
-                    {/* <Hero /> */}
-                    <BooksList />
+                    <Hero token={token} />
+                    <BooksList token={token} />
                   </>
                 }
               />
@@ -85,6 +95,6 @@ function App() {
       )}
     </Authenticator>
   );
-}
+};
 
 export default App;

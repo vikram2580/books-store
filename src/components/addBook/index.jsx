@@ -13,7 +13,10 @@ export default function AddBook() {
     author: "",
     year: "",
     publisher: "",
+    description: "",
     image: "",
+    imageBase64: "",
+    imagePreview: "",
   });
 
   const getIdToken = async () => {
@@ -33,8 +36,12 @@ export default function AddBook() {
             headers: { Authorization: `Bearer ${token}` },
           }
         );
-        setForm(res.data);
-        console.log(res.data); // assuming API returns the book object
+
+        setForm((prevForm) => ({
+          ...prevForm,
+          ...res.data,
+          imagePreview: res.data.imageUrl || "", // show existing image
+        }));
       } catch (err) {
         console.error("Error loading book:", err);
       }
@@ -44,30 +51,89 @@ export default function AddBook() {
   const handleChange = (e) =>
     setForm((f) => ({ ...f, [e.target.name]: e.target.value }));
 
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   const token = await getIdToken();
+  //   try {
+  //     if (id) {
+  //       // Edit
+  //       await axios.put(`${apiBaseUrl}?bookId=${id}`, form, {
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //           Authorization: `Bearer ${token}`,
+  //         },
+  //       });
+  //     } else {
+  //       // Add
+  //       await axios.post(apiBaseUrl, {
+  //         title: form.title,
+  //         author: form.author,
+  //         year: form.year,
+  //         publisher: form.publisher,
+  //         imageBase64: form.imageBase64,
+  //       }, {
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //           Authorization: `Bearer ${token}`,
+  //         },
+  //       });
+  //     }
+  //     navigate("/", { replace: true }); // go back home
+  //   } catch (err) {
+  //     console.error("Error saving book:", err);
+  //   }
+  // };
   const handleSubmit = async (e) => {
     e.preventDefault();
     const token = await getIdToken();
+
+    const payload = {
+      title: form.title,
+      author: form.author,
+      year: form.year,
+      publisher: form.publisher,
+      description: form.description,
+    };
+
+    if (form.imageBase64) {
+      payload.imageBase64 = form.imageBase64;
+    }
+
     try {
       if (id) {
-        // Edit
-        await axios.put(`${apiBaseUrl}?bookId=${id}`, form, {
+        await axios.put(`${apiBaseUrl}?bookId=${id}`, payload, {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
         });
       } else {
-        // Add
-        await axios.post(apiBaseUrl, form, {
+        await axios.post(apiBaseUrl, payload, {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
         });
       }
-      navigate("/", { replace: true }); // go back home
+
+      navigate("/", { replace: true });
     } catch (err) {
       console.error("Error saving book:", err);
+    }
+  };
+
+  const handleImageUpload = (file) => {
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const base64String = reader.result.split(",")[1]; // remove data:image/...;base64,
+      setForm((f) => ({
+        ...f,
+        imageBase64: base64String,
+        imagePreview: reader.result,
+      }));
+    };
+    if (file) {
+      reader.readAsDataURL(file);
     }
   };
 
@@ -79,7 +145,7 @@ export default function AddBook() {
         </h1>
         <div className="flex justify-center">
           <form onSubmit={handleSubmit} className="space-y-4 max-w-md ">
-            {["title", "author", "year", "publisher"].map((field) => (
+            {["title", "authors", "year", "publisher"].map((field) => (
               <input
                 key={field}
                 name={field}
@@ -91,7 +157,40 @@ export default function AddBook() {
                 required
               />
             ))}
-
+            <textarea
+              key={"description"}
+              name={"description"}
+              type={"text"}
+              placeholder={"Description"}
+              value={form.description}
+              onChange={handleChange}
+              className="w-full p-2 border rounded"
+              required
+            />
+            {form.imagePreview && (
+              <img
+                src={form.imagePreview}
+                alt="Preview"
+                className="w-full h-48 object-cover rounded mb-2"
+              />
+            )}
+            {form.imagePreview && (
+              <button
+                type="button"
+                className="text-sm text-red-500 underline mb-2"
+                onClick={() =>
+                  setForm((f) => ({ ...f, imageBase64: "", imagePreview: "" }))
+                }
+              >
+                Remove selected image
+              </button>
+            )}
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => handleImageUpload(e.target.files[0])}
+              className="w-full p-2 border rounded bg-white"
+            />
             <div className="flex space-x-4">
               <button
                 type="submit"

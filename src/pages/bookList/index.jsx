@@ -44,20 +44,22 @@ const BooksList = () => {
   };
 
   return (
-    <section className="pt-20 p-8 h-screen">
+    <section className="pt-20 p-8">
       <h1 className="text-4xl font-bold text-center mb-8">📚 All Books</h1>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {books.map((book) => (
           <div key={book.bookId} className="bg-white p-4 shadow rounded">
-            {/* <img
-              src={book.image || "https://via.placeholder.com/150"}
-              alt={book.title}
+            <img
+              src={book?.imageUrl}
+              alt={book?.title}
               className="w-full h-48 object-cover rounded mb-4"
-            /> */}
+            />
             <h3 className="text-xl font-semibold">{book.title}</h3>
-            <p>By {book.author}</p>
-            <p>Published: {book.year}</p>
-            <p>Publisher: {book.publisher}</p>
+            <p>By {book?.author}</p>
+            <p>Published: {book?.year}</p>
+            <p>Publisher: {book?.publisher}</p>
+            <p>Description: {book?.description}</p>
+
             <div className="mt-4 flex space-x-2">
               <button
                 onClick={() => handleDelete(book.bookId)}
